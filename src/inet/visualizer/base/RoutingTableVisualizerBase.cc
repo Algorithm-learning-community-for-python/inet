@@ -149,20 +149,20 @@ void RoutingTableVisualizerBase::receiveSignal(cComponent *source, simsignal_t s
 
 const RoutingTableVisualizerBase::RouteVisualization *RoutingTableVisualizerBase::getRouteVisualization(Ipv4Route *route, int nodeModuleId, int nextHopModuleId)
 {
-    auto key = std::make_tuple(route, nodeModuleId, nextHopModuleId);
+    auto key = std::make_tuple(route->getRoutingTable()->getRouterId(), nodeModuleId, nextHopModuleId);
     auto it = routeVisualizations.find(key);
     return it == routeVisualizations.end() ? nullptr : it->second;
 }
 
 void RoutingTableVisualizerBase::addRouteVisualization(const RouteVisualization *routeVisualization)
 {
-    auto key = std::make_tuple(routeVisualization->route, routeVisualization->sourceModuleId, routeVisualization->destinationModuleId);
+    auto key = std::make_tuple(routeVisualization->route->getRoutingTable()->getRouterId(), routeVisualization->sourceModuleId, routeVisualization->destinationModuleId);
     routeVisualizations[key] = routeVisualization;
 }
 
 void RoutingTableVisualizerBase::removeRouteVisualization(const RouteVisualization *routeVisualization)
 {
-    auto key = std::make_tuple(routeVisualization->route, routeVisualization->sourceModuleId, routeVisualization->destinationModuleId);
+    auto key = std::make_tuple(routeVisualization->route->getRoutingTable()->getRouterId(), routeVisualization->sourceModuleId, routeVisualization->destinationModuleId);
     routeVisualizations.erase(routeVisualizations.find(key));
 }
 
