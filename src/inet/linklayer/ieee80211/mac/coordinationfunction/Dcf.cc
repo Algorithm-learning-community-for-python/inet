@@ -125,6 +125,7 @@ void Dcf::transmitControlResponseFrame(Packet *responsePacket, const Ptr<const I
     emit(IRateSelection::datarateSelectedSignal, responseMode->getDataMode()->getNetBitrate().get(), responsePacket);
     EV_DEBUG << "Datarate for " << responsePacket->getName() << " is set to " << responseMode->getDataMode()->getNetBitrate() << ".\n";
     tx->transmitFrame(responsePacket, responseHeader, modeSet->getSifsTime(), this);
+    take(responsePacket);
     delete responsePacket;
 }
 
@@ -161,10 +162,12 @@ void Dcf::processLowerFrame(Packet *packet, const Ptr<const Ieee80211MacHeader>&
             updateDisplayString();
         }
         else {
+            take(packet);
             EV_INFO << "This frame is not for us" << std::endl;
             PacketDropDetails details;
             details.setReason(NOT_ADDRESSED_TO_US);
             emit(packetDroppedSignal, packet, &details);
+            take(packet);
             delete packet;
         }
         cancelEvent(startRxTimer);
@@ -172,6 +175,7 @@ void Dcf::processLowerFrame(Packet *packet, const Ptr<const Ieee80211MacHeader>&
     else if (isForUs(header))
         recipientProcessReceivedFrame(packet, header);
     else {
+        take(packet);
         EV_INFO << "This frame is not for us" << std::endl;
         PacketDropDetails details;
         details.setReason(NOT_ADDRESSED_TO_US);
@@ -231,6 +235,7 @@ void Dcf::recipientProcessReceivedFrame(Packet *packet, const Ptr<const Ieee8021
     else { // TODO else if (auto ctrlFrame = dynamic_cast<Ieee80211ControlFrame*>(frame))
         sendUp(recipientDataService->controlFrameReceived(packet, header));
         recipientProcessReceivedControlFrame(packet, header);
+        take(packet);
         delete packet;
     }
 }

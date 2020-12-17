@@ -171,6 +171,7 @@ void Hcf::processLowerFrame(Packet *packet, const Ptr<const Ieee80211MacHeader>&
         }
         else {
             EV_INFO << "This frame is not for us" << std::endl;
+            take(packet);
             PacketDropDetails details;
             details.setReason(NOT_ADDRESSED_TO_US);
             emit(packetDroppedSignal, packet, &details);
@@ -184,6 +185,7 @@ void Hcf::processLowerFrame(Packet *packet, const Ptr<const Ieee80211MacHeader>&
         recipientProcessReceivedFrame(packet, header);
     else {
         EV_INFO << "This frame is not for us" << std::endl;
+        take(packet);
         PacketDropDetails details;
         details.setReason(NOT_ADDRESSED_TO_US);
         emit(packetDroppedSignal, packet, &details);
@@ -712,6 +714,7 @@ void Hcf::transmitControlResponseFrame(Packet *responsePacket, const Ptr<const I
     emit(IRateSelection::datarateSelectedSignal, responseMode->getDataMode()->getNetBitrate().get(), responsePacket);
     EV_DEBUG << "Datarate for " << responsePacket->getName() << " is set to " << responseMode->getDataMode()->getNetBitrate() << ".\n";
     tx->transmitFrame(responsePacket, responseHeader, modeSet->getSifsTime(), this);
+    take(responsePacket);
     delete responsePacket;
 }
 
