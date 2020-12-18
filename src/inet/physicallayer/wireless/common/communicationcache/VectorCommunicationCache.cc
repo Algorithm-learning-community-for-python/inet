@@ -27,8 +27,6 @@ Define_Module(VectorCommunicationCache);
 VectorCommunicationCache::~VectorCommunicationCache()
 {
     for (auto& transmissionCacheEntry : transmissionCache) {
-        delete transmissionCacheEntry.signal;
-        delete transmissionCacheEntry.transmission;
         delete transmissionCacheEntry.receptionCacheEntries;
     }
 }
@@ -191,8 +189,6 @@ void VectorCommunicationCache::removeNonInterferingTransmissions(std::function<v
             }
             if (transmissionCacheEntry.transmission != nullptr) {
                 f(transmissionCacheEntry.transmission);
-                delete transmissionCacheEntry.signal;
-                delete transmissionCacheEntry.transmission;
             }
         }
         else
