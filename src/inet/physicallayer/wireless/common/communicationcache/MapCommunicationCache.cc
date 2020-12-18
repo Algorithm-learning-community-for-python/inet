@@ -112,7 +112,8 @@ void MapCommunicationCache::removeTransmission(const ITransmission *transmission
         transmissionCacheEntry.receptionCacheEntries = nullptr;
         transmissionCache.erase(it);
     }
-    delete transmission;
+    else
+        throw cRuntimeError("Cannot find transmission");
 }
 
 const ITransmission *MapCommunicationCache::getTransmission(int id) const
